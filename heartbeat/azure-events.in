@@ -90,18 +90,16 @@ class azHelper:
 		req.add_header("User-Agent", USER_AGENT)
 		try:
 			resp = urllib2.urlopen(req)
-		except urllib2.URLError as e:
+		except URLError as e:
 			if hasattr(e, 'reason'):
-				ocf.ocf_exit_reason("Failed to reach the server: %s" % e.reason)
+				ocf.logger.warning("Failed to reach the server: %s" % e.reason)
 				clusterHelper.setAttr(attr_globalPullState, "IDLE")
 			elif hasattr(e, 'code'):
-				ocf.ocf_exit_reason("The server couldn\'t fulfill the request. Error code: %s" % e.code)
+				ocf.logger.warning("The server couldn\'t fulfill the request. Error code: %s" % e.code)
 				clusterHelper.setAttr(attr_globalPullState, "IDLE")
 		else:
 			data = resp.read()
 			ocf.logger.debug("_sendMetadataRequest: response = %s" % data)
-		
-		exit(ocf.OCF_ERR_GENERIC)
 
 		if data:
 			data = json.loads(data)
